@@ -1,6 +1,6 @@
 # Pull Request
 
-Thank you for contributing to **Aether Meet**!  
+Thank you for contributing to **My Enterprise**!  
 Please fill out the following information to help us review your changes effectively.
 
 ---
