@@ -1,7 +1,7 @@
 {
-  "name": "company-website",
+  "name": "my-enterprise",
   "version": "0.1.0",
-  "description": "Welcome to the official repository for the Sky Genesis Enterprise website.",
+  "description": "Welcome to the official repository for the My Enterprise website.",
   "private": true,
   "type": "module",
   "workspaces": [
@@ -18,7 +18,7 @@
     "monitoring"
   ],
   "scripts": {
-    "dev": "pnpm --filter @company-website/app dev",
+    "dev": "pnpm --filter @my-enterprise/app dev",
     "dev:full": "node scripts/dev.mjs",
     "dev:frontend": "pnpm --filter app dev",
     "dev:backend": "pnpm --filter server dev",
@@ -74,7 +74,7 @@
   "packageManager": "pnpm@8.15.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/skygenesisenterprise/company-website.git"
+    "url": "https://github.com/skygenesisenterprise/my-enterprise.git"
   },
   "keywords": [
     "website",
@@ -96,9 +96,9 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/skygenesisenterprise/company-website/issues"
+    "url": "https://github.com/skygenesisenterprise/my-enterprise/issues"
   },
-  "homepage": "https://github.com/skygenesisenterprise/company-website#readme",
+  "homepage": "https://github.com/skygenesisenterprise/my-enterprise#readme",
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
       "eslint --fix --quiet",
