@@ -1,4 +1,13 @@
+packages:
+  - "app"
+  - "tools"
+  - "tests"
+  - "package/snap"
+  - "package/node"
+  - "package/github"
+  - "package/vscode"
+  - "package/cli"
+
 ignoredBuiltDependencies:
-  - '@tailwindcss/oxide'
   - sharp
   - unrs-resolver

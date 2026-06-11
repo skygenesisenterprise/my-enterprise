@@ -1,36 +1,26 @@
-# AGENTS.md
+# Agent Guidelines
 
-## Commands
-- **Development**: `pnpm dev` (runs Next.js with Turbopack)
-- **Build**: `pnpm build` (production build with Turbopack)
-- **Lint**: `pnpm lint` (ESLint with Next.js config)
-- **Start**: `pnpm start` (production server)
+## Build Commands
 
-## Code Style Guidelines
+- `pnpm dev` - Start development server
+- `pnpm build` - Build for production
+- `pnpm lint` - Run ESLint
+- `pnpm start` - Start production server
 
-### Imports & Formatting
-- Use absolute imports with `@/*` path alias (configured in tsconfig.json)
-- Follow Next.js App Router structure
-- Use Tailwind CSS v4 for styling
-- ESLint config extends `next/core-web-vitals` and `next/typescript`
+## Code Style
 
-### TypeScript
-- Strict mode enabled
-- Use proper typing for all components and functions
-- Import types with `import type` when possible
+- Use TypeScript with strict mode enabled
+- Import React components with: `import * as React from "react"`
+- Use `@/*` path aliases for internal imports
+- Follow Next.js App Router conventions
+- Use Tailwind CSS for styling with `cn()` utility
+- Components use PascalCase, files use kebab-case
+- Context providers end with `Provider` suffix
+- Custom hooks start with `use`
+- Error boundaries for async operations
+- Prefer interfaces over types for public APIs
 
-### Naming Conventions
-- Components: PascalCase
-- Files: kebab-case for utilities, PascalCase for components
-- Use descriptive variable names
+## API Reference
 
-### Error Handling
-- Use proper TypeScript error boundaries
-- Handle async operations with try-catch blocks
-- Return proper error responses from API routes
-
-### Project Structure
-- `app/` - Next.js App Router pages and layouts
-- `api/` - Backend API endpoints
-- `public/` - Static assets
-- Use Tailwind CSS classes for all styling
+- When needing to make API calls from the web client, refer to `server/api/v1/` for the available endpoints
+- Each subdirectory contains different API categories (repo, org, user, admin, misc, etc.)
