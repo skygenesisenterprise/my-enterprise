@@ -23,6 +23,12 @@ const eslintConfig = defineConfig([
       },
     },
   },
+  {
+    files: ["metro.config.cjs"],
+    rules: {
+      "@typescript-eslint/no-require-imports": "off",
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:

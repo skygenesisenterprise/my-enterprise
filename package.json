@@ -21,6 +21,7 @@
     "dev": "pnpm --filter @my-enterprise/app dev",
     "dev:full": "node scripts/dev.mjs",
     "dev:frontend": "pnpm --filter app dev",
+    "dev:mobile": "pnpm --dir apps dev:mobile",
     "dev:backend": "pnpm --filter server dev",
     "dev:cli": "pnpm --filter cli dev",
     "build": "pnpm -r build",

@@ -47,3 +47,9 @@ ios/
 # Storybook build output
 storybook-static/
 .source
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
