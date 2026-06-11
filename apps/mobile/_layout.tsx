@@ -2,14 +2,15 @@ import * as React from "react";
 
 import { MaterialIcons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
-import { Platform, StyleSheet, useColorScheme, View } from "react-native";
+import { Platform, StyleSheet, useColorScheme, View, ViewStyle } from "react-native";
 
 import "@/styles/globals.css";
 
-import { Colors, MobileTokens } from "@/constants/theme";
+import { PushNotificationManager } from "@/components/mobile/push-notification-manager";
+import { Colors } from "@/constants/theme";
 
 interface TabIconProps {
-  color: string;
+  color: React.ComponentProps<typeof MaterialIcons>["color"];
   focused: boolean;
   name: React.ComponentProps<typeof MaterialIcons>["name"];
 }
@@ -24,10 +25,10 @@ function WebPhoneFrame({ children }: WebPhoneFrameProps) {
   }
 
   return (
-    <View style={styles.browserStage}>
-      <View style={styles.phoneShell}>
-        <View pointerEvents="none" style={styles.dynamicIsland} />
-        <View style={styles.phoneScreen}>{children}</View>
+    <View style={styles.browserStage as ViewStyle}>
+      <View style={styles.phoneShell as ViewStyle}>
+        <View style={[styles.dynamicIsland as ViewStyle, { pointerEvents: "none" as const }]} />
+        <View style={styles.phoneScreen as ViewStyle}>{children}</View>
       </View>
     </View>
   );
@@ -35,10 +36,10 @@ function WebPhoneFrame({ children }: WebPhoneFrameProps) {
 
 function TabIcon({ color, focused, name }: TabIconProps) {
   return (
-    <View style={[styles.tabIconWrap, focused && styles.tabIconWrapActive]}>
+    <View style={[styles.tabIconWrap as ViewStyle, focused && styles.tabIconWrapActive as ViewStyle]}>
       <MaterialIcons
         name={name}
-        size={32}
+        size={24}
         color={color}
         style={{
           opacity: focused ? 1 : 0.96,
@@ -54,39 +55,38 @@ export default function MobileLayout() {
   const theme = Colors[scheme === "dark" ? "dark" : "light"];
 
   return (
-    <WebPhoneFrame>
-      <Tabs
+    <PushNotificationManager>
+      <WebPhoneFrame>
+        <Tabs
         screenOptions={{
           headerShown: false,
           sceneStyle: {
             backgroundColor: theme.background,
           },
-          tabBarActiveTintColor: "#168EEA",
-          tabBarInactiveTintColor: "#080B10",
+          tabBarActiveTintColor: "#007AFF",
+          tabBarInactiveTintColor: "#6B7280",
           tabBarLabelStyle: {
-            fontSize: 12,
-            lineHeight: 15,
-            fontWeight: "700",
-            marginTop: -9,
-            marginBottom: 10,
+            fontSize: 10,
+            lineHeight: 12,
+            fontWeight: "600",
+            marginTop: 0,
+            marginBottom: 4,
           },
           tabBarStyle: {
             position: "absolute",
-            left: 12,
-            right: 12,
-            bottom: 18,
-            height: 82,
-            paddingTop: 8,
-            paddingBottom: 6,
-            borderTopWidth: 0,
-            borderRadius: MobileTokens.radius.pill,
-            backgroundColor: "rgba(253, 254, 255, 0.9)",
-            borderWidth: 1,
-            borderColor: "rgba(222, 231, 242, 0.9)",
-            ...MobileTokens.shadow.floating,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: 74,
+            paddingTop: 6,
+            paddingBottom: 8,
+            borderTopWidth: 1,
+            borderTopColor: "#D1D5DB",
+            borderRadius: 0,
+            backgroundColor: "rgba(255, 255, 255, 0.96)",
           },
           tabBarItemStyle: {
-            borderRadius: MobileTokens.radius.pill,
+            borderRadius: 0,
             marginHorizontal: 2,
           },
         }}
@@ -94,7 +94,7 @@ export default function MobileLayout() {
         <Tabs.Screen
           name="index"
           options={{
-            title: "Accueil",
+            title: "Home",
             tabBarIcon: ({ color, focused }) => (
               <TabIcon name="home-filled" color={color} focused={focused} />
             ),
@@ -103,14 +103,23 @@ export default function MobileLayout() {
         <Tabs.Screen
           name="feed"
           options={{
-            title: "Fil",
+            title: "Feed",
+            tabBarIcon: ({ color, focused }) => (
+              <TabIcon name="dynamic-feed" color={color} focused={focused} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="chat/index"
+          options={{
+            title: "Chat",
             tabBarIcon: ({ color, focused }) => (
               <TabIcon name="chat-bubble-outline" color={color} focused={focused} />
             ),
           }}
         />
         <Tabs.Screen
-          name="services"
+          name="services/index"
           options={{
             title: "Services",
             tabBarIcon: ({ color, focused }) => (
@@ -119,40 +128,64 @@ export default function MobileLayout() {
           }}
         />
         <Tabs.Screen
-          name="notifications"
-          options={{
-            title: "Notifs",
-            tabBarIcon: ({ color, focused }) => (
-              <TabIcon name="notifications-none" color={color} focused={focused} />
-            ),
-          }}
-        />
-        <Tabs.Screen
           name="profile"
           options={{
-            title: "Profil",
+            title: "Profile",
             tabBarIcon: ({ color, focused }) => (
               <TabIcon name="account-circle" color={color} focused={focused} />
             ),
           }}
         />
-      </Tabs>
-    </WebPhoneFrame>
+        <Tabs.Screen name="discover" options={{ href: null }} />
+        <Tabs.Screen name="learn" options={{ href: null }} />
+        <Tabs.Screen name="apps" options={{ href: null }} />
+        <Tabs.Screen name="account" options={{ href: null }} />
+        <Tabs.Screen name="chat/[id]" options={{ href: null }} />
+        <Tabs.Screen name="services/[id]" options={{ href: null }} />
+        <Tabs.Screen name="notifications" options={{ href: null }} />
+        <Tabs.Screen name="_dashboard" options={{ href: null }} />
+        <Tabs.Screen name="program" options={{ href: null }} />
+        <Tabs.Screen name="news-detail" options={{ href: null }} />
+        <Tabs.Screen name="product-detail" options={{ href: null }} />
+        <Tabs.Screen name="guilderia-developer" options={{ href: null }} />
+        <Tabs.Screen name="app-detail" options={{ href: null }} />
+        <Tabs.Screen name="settings" options={{ href: null }} />
+        <Tabs.Screen
+          name="login"
+          options={{
+            href: null,
+            tabBarStyle: {
+              display: "none",
+            },
+          }}
+        />
+        <Tabs.Screen
+          name="register"
+          options={{
+            href: null,
+            tabBarStyle: {
+              display: "none",
+            },
+          }}
+        />
+        </Tabs>
+      </WebPhoneFrame>
+    </PushNotificationManager>
   );
 }
 
 const styles = StyleSheet.create({
   browserStage: {
     flex: 1,
-    minHeight: "100vh",
+    minHeight: "100vh" as any,
     alignItems: "center",
     justifyContent: "center",
     padding: 24,
     backgroundColor: "#E8ECF3",
   },
   phoneShell: {
-    width: "min(393px, calc(100vw - 32px))",
-    height: "min(852px, calc(100vh - 32px))",
+    width: "min(393px, calc(100vw - 32px))" as any,
+    height: "min(852px, calc(100vh - 32px))" as any,
     minHeight: 640,
     padding: 10,
     borderRadius: 54,
@@ -181,13 +214,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#050608",
   },
   tabIconWrap: {
-    width: 64,
-    height: 44,
-    borderRadius: 999,
+    width: 34,
+    height: 30,
+    borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
   },
   tabIconWrapActive: {
-    backgroundColor: "#DDE7F4",
+    backgroundColor: "transparent",
   },
 });

@@ -1,11 +1,10 @@
 {
   "expo": {
-    "name": "mobile",
+    "name": "My Enterprise",
     "slug": "mobile",
     "version": "1.0.0",
-    "entryPoint": "expo-router/entry",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./public/enterprise.png",
     "scheme": "mobile",
     "userInterfaceStyle": "automatic",
     "ios": {
@@ -40,7 +39,9 @@
             "imageWidth": 76
           }
         }
-      ]
+      ],
+      "expo-font",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true,
