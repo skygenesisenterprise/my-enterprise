@@ -2,9 +2,10 @@ import * as React from "react";
 
 import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { ScreenTransition } from "@/components/mobile/screen-transition";
+import { usePhoneSafeAreaInsets } from "@/components/mobile/use-phone-safe-area";
 
 const quickActions = [
   {
@@ -43,10 +44,11 @@ const favoriteServices = [
 ];
 
 export default function HomeScreen() {
+  const insets = usePhoneSafeAreaInsets();
   return (
     <ScreenTransition>
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+    <View style={styles.safeArea}>
+      <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + 12 }]} showsVerticalScrollIndicator={false}>
         <View style={styles.profileRow}>
           <View>
             <Text style={styles.greeting}>Good morning</Text>
@@ -183,7 +185,7 @@ export default function HomeScreen() {
           ))}
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
     </ScreenTransition>
   );
 }
@@ -227,7 +229,6 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 20,
-    paddingTop: 48,
     paddingBottom: 116,
   },
   profileRow: {

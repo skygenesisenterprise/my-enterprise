@@ -2,9 +2,10 @@ import * as React from "react";
 
 import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { ScreenTransition } from "@/components/mobile/screen-transition";
+import { usePhoneSafeAreaInsets } from "@/components/mobile/use-phone-safe-area";
 
 type IconName = React.ComponentProps<typeof MaterialIcons>["name"];
 type ServiceStatus = "Active" | "Enabled" | "Beta" | "Internal" | "Pending" | "Operational" | "Requires setup";
@@ -94,10 +95,11 @@ const statusColors: Record<ServiceStatus, { backgroundColor: string; color: stri
 };
 
 export default function ServicesScreen() {
+  const insets = usePhoneSafeAreaInsets();
   return (
     <ScreenTransition>
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+    <View style={styles.safeArea}>
+      <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + 6 }]} showsVerticalScrollIndicator={false}>
         <ServicesHeader />
         <ServiceSearchBar />
 
@@ -126,7 +128,7 @@ export default function ServicesScreen() {
           ))}
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
     </ScreenTransition>
   );
 }
@@ -254,7 +256,7 @@ function RecentlyUsedRow({ name }: { name: string }) {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: "#F5F7FA" },
-  content: { paddingHorizontal: 20, paddingTop: 34, paddingBottom: 116 },
+  content: { paddingHorizontal: 20, paddingBottom: 116 },
   header: {
     flexDirection: "row",
     alignItems: "flex-start",

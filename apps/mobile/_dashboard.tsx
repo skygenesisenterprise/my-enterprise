@@ -4,13 +4,13 @@ import { MaterialIcons } from "@expo/vector-icons";
 import {
   Pressable,
   Platform,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from "react-native";
 
+import { usePhoneSafeAreaInsets } from "@/components/mobile/use-phone-safe-area";
 import { MobileTokens } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 
@@ -186,17 +186,18 @@ function AgendaCard({ item }: { item: AgendaItem }) {
 }
 
 export function DashboardScreen() {
+  const insets = usePhoneSafeAreaInsets();
   const theme = useTheme();
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]}>
+    <View style={[styles.safeArea, { backgroundColor: theme.background }]}>
       <BrowserStatusBar />
       <ScrollView
         style={[styles.container, { backgroundColor: theme.background }]}
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
       >
-        <View style={[styles.hero, { backgroundColor: theme.primary }]}>
+        <View style={[styles.hero, { backgroundColor: theme.primary, paddingTop: Platform.OS === "web" ? insets.top + 40 : insets.top + 20 }]}>
           <View style={styles.heroTopRow}>
             <View>
               <Text style={styles.greeting}>Bonsoir,</Text>
@@ -243,7 +244,7 @@ export function DashboardScreen() {
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -312,7 +313,6 @@ const styles = StyleSheet.create({
   },
   hero: {
     paddingHorizontal: 20,
-    paddingTop: Platform.OS === "web" ? 68 : 28,
     paddingBottom: 36,
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,

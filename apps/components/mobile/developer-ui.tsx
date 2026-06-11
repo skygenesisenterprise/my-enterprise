@@ -1,8 +1,9 @@
 import * as React from "react";
 
 import { MaterialIcons } from "@expo/vector-icons";
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
+import { usePhoneSafeAreaInsets } from "@/components/mobile/use-phone-safe-area";
 import { MobileTokens } from "@/constants/theme";
 import type { AetherProduct, DeveloperApp, Guide, IconName, StatusTone } from "@/data/developer";
 import { useTheme } from "@/hooks/use-theme";
@@ -61,13 +62,14 @@ const badgeColors: Record<StatusTone, { backgroundColor: string; color: string }
 };
 
 export function MobileScreen({ children, eyebrow, title, subtitle }: MobileScreenProps) {
+  const insets = usePhoneSafeAreaInsets();
   const theme = useTheme();
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]}>
+    <View style={[styles.safeArea, { backgroundColor: theme.background }]}>
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[styles.content, { paddingTop: insets.top + 6 }]}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
@@ -77,7 +79,7 @@ export function MobileScreen({ children, eyebrow, title, subtitle }: MobileScree
         </View>
         {children}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -218,7 +220,6 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 20,
-    paddingTop: 26,
     paddingBottom: 128,
     gap: 18,
   },

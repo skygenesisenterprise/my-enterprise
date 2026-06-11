@@ -1,7 +1,9 @@
 import * as React from "react";
 
 import { MaterialIcons } from "@expo/vector-icons";
-import { SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+
+import { usePhoneSafeAreaInsets } from "@/components/mobile/use-phone-safe-area";
 
 type IconName = React.ComponentProps<typeof MaterialIcons>["name"];
 type BadgeTone = "blue" | "green" | "gray";
@@ -76,9 +78,10 @@ const badgeColors: Record<BadgeTone, { backgroundColor: string; color: string }>
 };
 
 export default function SettingsScreen() {
+  const insets = usePhoneSafeAreaInsets();
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+    <View style={styles.safeArea}>
+      <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + 6 }]} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <Text style={styles.title}>Settings</Text>
           <Text style={styles.subtitle}>My Enterprise preferences and security</Text>
@@ -98,7 +101,7 @@ export default function SettingsScreen() {
           </SettingsSection>
         ))}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -200,7 +203,6 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 20,
-    paddingTop: 34,
     paddingBottom: 116,
   },
   header: {

@@ -1,9 +1,10 @@
 import * as React from "react";
 
 import { MaterialIcons } from "@expo/vector-icons";
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { ScreenTransition } from "@/components/mobile/screen-transition";
+import { usePhoneSafeAreaInsets } from "@/components/mobile/use-phone-safe-area";
 
 type IconName = React.ComponentProps<typeof MaterialIcons>["name"];
 
@@ -60,10 +61,11 @@ const posts = [
 ];
 
 export default function FeedScreen() {
+  const insets = usePhoneSafeAreaInsets();
   return (
     <ScreenTransition direction="down">
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+    <View style={styles.safeArea}>
+      <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + 6 }]} showsVerticalScrollIndicator={false}>
         <FeedHeader />
         <ComposerCard />
 
@@ -95,7 +97,7 @@ export default function FeedScreen() {
         <FeedPostCard post={posts[2]} />
         <FeedPostCard post={posts[3]} />
       </ScrollView>
-    </SafeAreaView>
+    </View>
     </ScreenTransition>
   );
 }
@@ -289,7 +291,6 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 20,
-    paddingTop: 34,
     paddingBottom: 116,
   },
   header: {

@@ -2,7 +2,9 @@ import * as React from "react";
 
 import { MaterialIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+
+import { usePhoneSafeAreaInsets } from "@/components/mobile/use-phone-safe-area";
 
 type IconName = React.ComponentProps<typeof MaterialIcons>["name"];
 
@@ -72,12 +74,13 @@ const fallback: ServiceDetail = {
 };
 
 export default function ServiceDetailScreen() {
+  const insets = usePhoneSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id?: string }>();
   const service = details[id ?? ""] ?? fallback;
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+    <View style={styles.safeArea}>
+      <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + 6 }]} showsVerticalScrollIndicator={false}>
         <ServiceDetailHeader service={service} />
 
         <Section title="Quick Actions">
@@ -107,7 +110,7 @@ export default function ServiceDetailScreen() {
           ))}
         </Section>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -163,7 +166,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: "#F5F7FA" },
-  content: { paddingHorizontal: 20, paddingTop: 24, paddingBottom: 116 },
+  content: { paddingHorizontal: 20, paddingBottom: 116 },
   heroCard: {
     borderWidth: 1,
     borderColor: "#E4EAF1",

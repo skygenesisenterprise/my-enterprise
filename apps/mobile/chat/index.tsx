@@ -1,10 +1,11 @@
 import * as React from "react";
 
 import { MaterialIcons } from "@expo/vector-icons";
-import { router } from "expo-router";
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import { router, useFocusEffect } from "expo-router";
+import { Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 
 import { ScreenTransition } from "@/components/mobile/screen-transition";
+import { usePhoneSafeAreaInsets } from "@/components/mobile/use-phone-safe-area";
 
 type IconName = React.ComponentProps<typeof MaterialIcons>["name"];
 
@@ -145,64 +146,87 @@ const systemConversations: Conversation[] = [
 ];
 
 export default function ChatScreen() {
+  const insets = usePhoneSafeAreaInsets();
+  const scrollRef = React.useRef<ScrollView>(null);
+  const { width } = useWindowDimensions();
+  const compact = width < 370;
+
+  useFocusEffect(
+    React.useCallback(() => {
+      requestAnimationFrame(() => {
+        scrollRef.current?.scrollTo({ x: 0, y: 0, animated: false });
+      });
+    }, []),
+  );
+
   return (
     <ScreenTransition direction="up">
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <ChatHeader />
-        <ChatSearchBar />
+    <View style={styles.safeArea}>
+      <ScrollView
+        ref={scrollRef}
+        contentContainerStyle={[
+          styles.content,
+          compact && styles.contentCompact,
+          { paddingTop: insets.top + 6 },
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
+        <ChatHeader compact={compact} />
+        <ChatSearchBar compact={compact} />
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterRow}>
           {filters.map((filter, index) => (
-            <ChatFilterPill key={filter} active={index === 0} label={filter} />
+            <ChatFilterPill key={filter} active={index === 0} compact={compact} label={filter} />
           ))}
         </ScrollView>
 
-        <ConversationSection conversations={priorityConversations} title="Priority" />
-        <ConversationSection conversations={teamChannels} title="Teams & Channels" />
-        <ConversationSection conversations={directMessages} title="Direct Messages" />
-        <ConversationSection conversations={systemConversations} system title="System & Support" />
+        <ConversationSection compact={compact} conversations={priorityConversations} title="Priority" />
+        <ConversationSection compact={compact} conversations={teamChannels} title="Teams & Channels" />
+        <ConversationSection compact={compact} conversations={directMessages} title="Direct Messages" />
+        <ConversationSection compact={compact} conversations={systemConversations} system title="System & Support" />
       </ScrollView>
-    </SafeAreaView>
+    </View>
     </ScreenTransition>
   );
 }
 
-function ChatHeader() {
+function ChatHeader({ compact }: { compact: boolean }) {
   return (
-    <View style={styles.header}>
-      <View>
-        <Text style={styles.title}>Chat</Text>
-        <Text style={styles.subtitle}>Internal messages and team conversations</Text>
+    <View style={[styles.header, compact && styles.headerCompact]}>
+      <View style={styles.headerCopy}>
+        <Text style={[styles.title, compact && styles.titleCompact]}>Chat</Text>
+        <Text style={[styles.subtitle, compact && styles.subtitleCompact]}>
+          Internal messages and team conversations
+        </Text>
       </View>
       <View style={styles.headerActions}>
-        <IconButton icon="edit" />
-        <IconButton icon="tune" />
+        <IconButton compact={compact} icon="edit" />
+        <IconButton compact={compact} icon="tune" />
       </View>
     </View>
   );
 }
 
-function IconButton({ icon }: { icon: IconName }) {
+function IconButton({ compact, icon }: { compact: boolean; icon: IconName }) {
   return (
-    <Pressable style={styles.iconButton}>
+    <Pressable style={[styles.iconButton, compact && styles.iconButtonCompact]}>
       <MaterialIcons name={icon} size={21} color="#0B1220" />
     </Pressable>
   );
 }
 
-function ChatSearchBar() {
+function ChatSearchBar({ compact }: { compact: boolean }) {
   return (
-    <View style={styles.searchCard}>
+    <View style={[styles.searchCard, compact && styles.searchCardCompact]}>
       <MaterialIcons name="search" size={21} color="#667085" />
-      <Text style={styles.searchText}>Search conversations, people or teams</Text>
+      <Text numberOfLines={1} style={styles.searchText}>Search conversations, people or teams</Text>
     </View>
   );
 }
 
-function ChatFilterPill({ active, label }: { active?: boolean; label: string }) {
+function ChatFilterPill({ active, compact, label }: { active?: boolean; compact: boolean; label: string }) {
   return (
-    <Pressable style={[styles.filterPill, active && styles.filterPillActive]}>
+    <Pressable style={[styles.filterPill, compact && styles.filterPillCompact, active && styles.filterPillActive]}>
       <Text style={[styles.filterText, active && styles.filterTextActive]}>{label}</Text>
     </Pressable>
   );
@@ -210,22 +234,24 @@ function ChatFilterPill({ active, label }: { active?: boolean; label: string }) 
 
 function ConversationSection({
   conversations,
+  compact,
   system,
   title,
 }: {
   conversations: Conversation[];
+  compact: boolean;
   system?: boolean;
   title: string;
 }) {
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      <View style={styles.sectionCard}>
+      <Text style={[styles.sectionTitle, compact && styles.sectionTitleCompact]}>{title}</Text>
+      <View style={[styles.sectionCard, compact && styles.sectionCardCompact]}>
         {conversations.map((conversation) =>
           system ? (
-            <SystemConversationRow key={conversation.id} conversation={conversation} />
+            <SystemConversationRow compact={compact} key={conversation.id} conversation={conversation} />
           ) : (
-            <ConversationRow key={conversation.id} conversation={conversation} />
+            <ConversationRow compact={compact} key={conversation.id} conversation={conversation} />
           ),
         )}
       </View>
@@ -233,26 +259,26 @@ function ConversationSection({
   );
 }
 
-function ConversationRow({ conversation }: { conversation: Conversation }) {
+function ConversationRow({ compact, conversation }: { compact: boolean; conversation: Conversation }) {
   return (
-    <Pressable style={styles.conversationRow} onPress={() => router.push(`/chat/${conversation.id}`)}>
+    <Pressable style={[styles.conversationRow, compact && styles.conversationRowCompact]} onPress={() => router.push(`/chat/${conversation.id}`)}>
       <View style={styles.avatarWrap}>
-        <View style={styles.avatar}>
+        <View style={[styles.avatar, compact && styles.avatarCompact]}>
           <Text style={styles.avatarText}>{conversation.initials}</Text>
         </View>
         {conversation.online ? <OnlineDot /> : null}
       </View>
       <View style={styles.conversationCopy}>
-        <View style={styles.conversationTop}>
+        <View style={[styles.conversationTop, compact && styles.conversationTopCompact]}>
           <Text style={styles.conversationName}>{conversation.name}</Text>
-          <Text style={styles.time}>{conversation.time}</Text>
+          <Text style={[styles.time, compact && styles.timeCompact]}>{conversation.time}</Text>
         </View>
         <Text style={styles.label}>{conversation.label}</Text>
         <Text numberOfLines={1} style={styles.message}>
           {conversation.message}
         </Text>
       </View>
-      <View style={styles.trailing}>
+      <View style={[styles.trailing, compact && styles.trailingCompact]}>
         {conversation.unread ? <UnreadBadge count={conversation.unread} /> : null}
         <MaterialIcons name="chevron-right" size={21} color="#A3ACBA" />
       </View>
@@ -260,22 +286,22 @@ function ConversationRow({ conversation }: { conversation: Conversation }) {
   );
 }
 
-function SystemConversationRow({ conversation }: { conversation: Conversation }) {
+function SystemConversationRow({ compact, conversation }: { compact: boolean; conversation: Conversation }) {
   return (
-    <Pressable style={styles.conversationRow} onPress={() => router.push(`/chat/${conversation.id}`)}>
-      <View style={[styles.avatar, styles.systemAvatar]}>
+    <Pressable style={[styles.conversationRow, compact && styles.conversationRowCompact]} onPress={() => router.push(`/chat/${conversation.id}`)}>
+      <View style={[styles.avatar, styles.systemAvatar, compact && styles.avatarCompact]}>
         <Text style={styles.avatarText}>{conversation.initials}</Text>
       </View>
       <View style={styles.conversationCopy}>
-        <View style={styles.conversationTop}>
+        <View style={[styles.conversationTop, compact && styles.conversationTopCompact]}>
           <Text style={styles.conversationName}>{conversation.name}</Text>
-          <Text style={styles.time}>{conversation.time}</Text>
+          <Text style={[styles.time, compact && styles.timeCompact]}>{conversation.time}</Text>
         </View>
         <Text numberOfLines={1} style={styles.message}>
           {conversation.message}
         </Text>
       </View>
-      <View style={styles.trailing}>
+      <View style={[styles.trailing, compact && styles.trailingCompact]}>
         {conversation.badge ? <StatusBadge label={conversation.badge} /> : null}
         <MaterialIcons name="chevron-right" size={21} color="#A3ACBA" />
       </View>
@@ -310,8 +336,10 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 20,
-    paddingTop: 34,
     paddingBottom: 116,
+  },
+  contentCompact: {
+    paddingHorizontal: 14,
   },
   header: {
     flexDirection: "row",
@@ -320,17 +348,29 @@ const styles = StyleSheet.create({
     gap: 14,
     marginBottom: 18,
   },
+  headerCompact: {
+    gap: 10,
+    marginBottom: 16,
+  },
   title: {
     color: "#0B1220",
     fontSize: 34,
     lineHeight: 39,
     fontWeight: "900",
   },
+  titleCompact: {
+    fontSize: 30,
+    lineHeight: 34,
+  },
   subtitle: {
     color: "#667085",
     fontSize: 15,
     lineHeight: 21,
     fontWeight: "500",
+  },
+  subtitleCompact: {
+    fontSize: 14,
+    lineHeight: 19,
   },
   headerActions: {
     flexDirection: "row",
@@ -347,6 +387,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: "#FFFFFF",
   },
+  iconButtonCompact: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+  },
   searchCard: {
     height: 48,
     flexDirection: "row",
@@ -359,7 +404,12 @@ const styles = StyleSheet.create({
     marginBottom: 14,
     backgroundColor: "#FFFFFF",
   },
+  searchCardCompact: {
+    marginBottom: 12,
+    paddingHorizontal: 12,
+  },
   searchText: {
+    flex: 1,
     color: "#667085",
     fontSize: 14,
     lineHeight: 19,
@@ -377,6 +427,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 9,
     backgroundColor: "#FFFFFF",
+  },
+  filterPillCompact: {
+    paddingHorizontal: 13,
+    paddingVertical: 8,
   },
   filterPillActive: {
     borderColor: "#168EEA",
@@ -401,6 +455,11 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     marginBottom: 11,
   },
+  sectionTitleCompact: {
+    fontSize: 19,
+    lineHeight: 24,
+    marginBottom: 10,
+  },
   sectionCard: {
     borderWidth: 1,
     borderColor: "#E4EAF1",
@@ -409,11 +468,18 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     backgroundColor: "#FFFFFF",
   },
+  sectionCardCompact: {
+    paddingHorizontal: 12,
+  },
   conversationRow: {
     minHeight: 82,
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
+  },
+  conversationRowCompact: {
+    minHeight: 76,
+    gap: 10,
   },
   avatarWrap: {
     position: "relative",
@@ -425,6 +491,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#168EEA",
+  },
+  avatarCompact: {
+    width: 42,
+    height: 42,
+    borderRadius: 16,
   },
   systemAvatar: {
     backgroundColor: "#0B1220",
@@ -454,6 +525,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: 10,
   },
+  conversationTopCompact: {
+    gap: 8,
+  },
   conversationName: {
     flex: 1,
     color: "#0B1220",
@@ -466,6 +540,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 17,
     fontWeight: "700",
+  },
+  timeCompact: {
+    fontSize: 11,
+    lineHeight: 15,
   },
   label: {
     color: "#168EEA",
@@ -482,6 +560,10 @@ const styles = StyleSheet.create({
   trailing: {
     alignItems: "flex-end",
     gap: 7,
+    minWidth: 28,
+  },
+  trailingCompact: {
+    minWidth: 22,
   },
   unreadBadge: {
     minWidth: 22,

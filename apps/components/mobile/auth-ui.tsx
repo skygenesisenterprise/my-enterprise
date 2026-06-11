@@ -3,7 +3,6 @@ import * as React from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import {
   Pressable,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -11,6 +10,7 @@ import {
   View,
 } from "react-native";
 
+import { usePhoneSafeAreaInsets } from "@/components/mobile/use-phone-safe-area";
 import type { IconName } from "@/data/developer";
 
 interface AuthScreenProps {
@@ -43,9 +43,10 @@ interface AuthNoticeProps {
 }
 
 export function AuthScreen({ children, footerAction, subtitle, title }: AuthScreenProps) {
+  const insets = usePhoneSafeAreaInsets();
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+    <View style={styles.safeArea}>
+      <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 16 }]} showsVerticalScrollIndicator={false}>
         <View style={styles.card}>
           <View style={styles.brandBlock}>
             <Text style={styles.brand}>Sky Genesis Enterprise</Text>
@@ -75,7 +76,7 @@ export function AuthScreen({ children, footerAction, subtitle, title }: AuthScre
           </Text>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -174,7 +175,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "center",
     paddingHorizontal: 24,
-    paddingVertical: 28,
     gap: 20,
   },
   card: {
